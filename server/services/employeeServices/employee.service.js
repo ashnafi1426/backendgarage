@@ -67,14 +67,47 @@ async function getAllEmployees() {
         employee_phone
       ),
       employee_role (
-        company_role_id,
-        company_roles ( company_role_name )
+        company_role_id
       )
     `)
     .order('employee_id', { ascending: false });
 
-  if (error) throw error;
-  return data;
+  if (error) {
+    console.error('Error fetching employees:', error);
+    throw error;
+  }
+
+  // Map role IDs to role names (in case company_roles table doesn't exist or has wrong data)
+  const roleMap = {
+    1: 'Employee',
+    2: 'Manager',
+    3: 'Admin'
+  };
+
+  // Flatten the data structure and map role names
+  const flattenedData = data.map(emp => {
+    const roleId = emp.employee_role?.company_role_id || 0;
+    const roleName = roleMap[roleId] || 'Unknown';
+    
+    console.log(`Employee ${emp.employee_id} (${emp.employee_email}) - Role ID: ${roleId}, Role Name: ${roleName}`);
+    
+    return {
+      employee_id: emp.employee_id,
+      employee_email: emp.employee_email,
+      employee_added_date: emp.employee_added_date,
+      employee_active_status: emp.employee_active_status,
+      employee_info: emp.employee_info || {},
+      employee_role: {
+        company_role_id: roleId,
+        company_roles: {
+          company_role_name: roleName
+        }
+      }
+    };
+  });
+
+  console.log(`Fetched ${flattenedData.length} employees`);
+  return flattenedData;
 }
 
 async function getEmployeeById(id) {
