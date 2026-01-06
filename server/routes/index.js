@@ -12,6 +12,7 @@ const serviceRouter = require('./serviceRoutes/service.routes');
 const orderRouter = require('./orderRoutes/order.routes');
 const paymentRouter = require('./paymentRoutes/payment.routes');
 const stripeRouter = require('./stripeRoutes/stripe.routes');
+const contactRouter = require('./contactRoutes/contact.routes');
 
 // Add routes to the main router
 router.use(employeeRouter);
@@ -22,6 +23,7 @@ router.use(serviceRouter);
 router.use(orderRouter);
 router.use(paymentRouter);
 router.use(stripeRouter);
+router.use(contactRouter);
 
 // Export the router
 module.exports = router; 
